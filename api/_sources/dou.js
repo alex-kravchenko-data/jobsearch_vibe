@@ -9,7 +9,10 @@ import { XMLParser } from "fast-xml-parser";
 import { fetchText } from "../_lib/fetch.js";
 import { normalizeJob } from "../_lib/jobs.js";
 
-const parser = new XMLParser({ ignoreAttributes: false });
+// processEntities:false avoids fast-xml-parser's entity-expansion safety limit
+// (DOU feeds contain >1000 HTML entities). We decode the entities we care about
+// ourselves in decode() below, then strip the HTML.
+const parser = new XMLParser({ ignoreAttributes: false, processEntities: false });
 
 export async function fetchDou({ query = "", category = "" } = {}) {
   // The DOU RSS feed endpoint supports `category`/`city` only — not free-text
@@ -67,10 +70,20 @@ function stripHtml(html) {
 
 function decode(s) {
   return s
-    .replace(/&amp;/g, "&")
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => safeChar(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => safeChar(parseInt(d, 10)))
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, " ");
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&"); // last, so we don't double-decode
+}
+
+function safeChar(code) {
+  try {
+    return String.fromCodePoint(code);
+  } catch {
+    return "";
+  }
 }
