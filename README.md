@@ -1,10 +1,9 @@
 # 🎯 JobSearch Vibe
 
 Агрегатор вакансій з українських job-бордів (**DOU**, **work.ua**, **robota.ua**,
-**Djinni**, **OLX**, опційно Jooble/LinkedIn) з фільтрами, гридом/списком
+опційно Jooble; Djinni/LinkedIn — best-effort) з фільтрами, гридом/списком
 результатів, експортом у CSV/JSON та кнопкою **«Розумний пошук»**, що відсіює
-нерелевантне й сортує найкращі вакансії. Плюс вкладки **аналізу резюме** та
-**профілю LinkedIn** на базі Claude.
+нерелевантне й сортує найкращі вакансії. Плюс вкладка **аналізу резюме** на базі Claude.
 
 ## Можливості
 
@@ -12,11 +11,12 @@
 - 🌗 Перемикач **світлої/темної теми** (зберігається в браузері).
 - 💰 Окремий показ **рівня зарплати** + дати публікації на картці.
 - ✨ **Розумний пошук** з поясненням принципу роботи (евристика + опційний AI-rerank).
+- 🔧 Окреме поле **пошуку за інструментами** (After Effects, Tableau…) у тексті вакансії.
 - 📄 **Аналіз резюме** (PDF / DOCX / TXT / зображення) → оцінка, поради, покращена версія.
-- 💼 **Покращення профілю LinkedIn** → варіанти Headline, переписаний About, ключові слова.
 
-> Вкладки «Резюме» та «LinkedIn» працюють через Claude (`claude-opus-4-8`,
-> adaptive thinking, structured outputs) і потребують `ANTHROPIC_API_KEY`.
+> Вкладка «Резюме» працює через Claude і потребує `ANTHROPIC_API_KEY`.
+> Модель — `ANALYSIS_MODEL` (за замовч. дешева `claude-haiku-4-5`).
+> Ендпоінт можна захистити кодом доступу `ANALYSIS_ACCESS_CODE`.
 
 ## Архітектура
 
@@ -47,9 +47,8 @@ GitHub Pages  ──(fetch)──►  Vercel Serverless API  ──►  DOU RSS 
 | work.ua   | Парсинг HTML                   | 🟡 середня | #1 загальний борд (~106K) |
 | robota.ua | Публічний JSON API (api.robota.ua) | 🟡 середня | #2 загальний борд (~110K) |
 | Jooble    | Офіційний API (потрібен ключ)  | ✅ висока   | Мета-агрегатор сотень джерел |
-| Djinni    | Парсинг HTML (best-effort)     | 🟠 низька   | Анти-бот, може віддавати порожньо |
-| OLX       | Публічний JSON API (best-effort) | 🟠 низька  | Величезне охоплення, регіони |
-| LinkedIn  | Неофіційний guest-endpoint     | 🔴 ризик    | **Вимкнено за замовч.**, проти ToS |
+| Djinni    | Парсинг HTML (best-effort)     | 🔴 блок    | Cloudflare 403 з дата-центрів (Vercel) |
+| LinkedIn  | Неофіційний guest-endpoint     | 🔴 блок     | **Вимкнено за замовч.**, 403 + проти ToS |
 
 > **Jooble** вмикається, коли заданий `JOOBLE_API_KEY` (безкоштовний ключ на
 > [jooble.org/api/about](https://jooble.org/api/about)). Без ключа джерело
@@ -100,7 +99,8 @@ npm run serve:frontend
 | `remote`   | `remote` \| `office` \| `any`                   |
 | `location` | місто (фільтр за підрядком)                      |
 | `category` | категорія DOU (`Design`, `3D/Animation`, …)     |
-| `sources`  | через кому: `dou,work.ua,robota.ua,djinni,olx,jooble,linkedin` |
+| `tools`    | через кому: фрази-інструменти, які мають бути в тексті вакансії |
+| `sources`  | через кому: `dou,work.ua,robota.ua,djinni,jooble,linkedin` |
 | `smart`    | `1` — увімкнути розумне ранжування              |
 | `limit`    | макс. результатів (за замовч. 100)              |
 
@@ -116,13 +116,12 @@ npm run serve:frontend
 public/            статичний фронтенд (GitHub Pages)
   index.html
   css/styles.css
-  js/{config,auth,api,export,ui,app,resume,linkedin}.js
+  js/{config,auth,api,export,ui,app,resume}.js
 api/               serverless-функції (Vercel)
   search.js        пошук вакансій
   resume.js        аналіз резюме (Claude)
-  linkedin.js      аналіз профілю LinkedIn (Claude)
   _lib/            cors, нормалізація, ранжування, fetch, anthropic
-  _sources/        dou, workua, robotaua, jooble, djinni, olx, linkedin
+  _sources/        dou, workua, robotaua, jooble, djinni, linkedin
 .github/workflows/deploy-pages.yml
 vercel.json
 ```
@@ -130,9 +129,9 @@ vercel.json
 ## Інші ендпоінти
 
 - `POST /api/resume` — `{ filename, mimeType, dataBase64 }` → структурована оцінка резюме + покращена версія.
-- `POST /api/linkedin` — `{ profileText }` → поради щодо профілю + переписані секції.
 
-Обидва потребують `ANTHROPIC_API_KEY` (інакше повертають 503).
+Потребує `ANTHROPIC_API_KEY` (інакше 503). Якщо заданий `ANALYSIS_ACCESS_CODE` —
+запит має містити заголовок `x-access-code` (інакше 401).
 
 ## Дисклеймер
 

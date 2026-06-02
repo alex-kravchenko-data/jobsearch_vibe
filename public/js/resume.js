@@ -1,6 +1,6 @@
 // Resume tab: upload a file, send to /api/resume, render Claude's analysis.
 
-import { analyzeResume } from "./api.js";
+import { analyzeResume, setAccessCode } from "./api.js";
 import { esc } from "./ui.js";
 
 export function initResume() {
@@ -28,10 +28,24 @@ export function initResume() {
 
     try {
       const dataBase64 = await toBase64(file);
-      const data = await analyzeResume({ filename: file.name, mimeType: file.type, dataBase64 });
+      let data;
+      try {
+        data = await analyzeResume({ filename: file.name, mimeType: file.type, dataBase64 });
+      } catch (err) {
+        // Access-code gate: prompt once, store, and retry.
+        if (err.status === 401) {
+          const code = prompt("Введіть код доступу для аналізу:");
+          if (!code) throw new Error("Потрібен код доступу.");
+          setAccessCode(code.trim());
+          data = await analyzeResume({ filename: file.name, mimeType: file.type, dataBase64 });
+        } else {
+          throw err;
+        }
+      }
       status.innerHTML = "";
       renderResumeAnalysis(result, data);
     } catch (err) {
+      if (err.status === 401) setAccessCode("");
       status.innerHTML = `<span class="err">Помилка: ${esc(err.message)}</span>`;
     } finally {
       btn.disabled = false;
