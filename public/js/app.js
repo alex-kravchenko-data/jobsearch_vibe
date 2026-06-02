@@ -49,7 +49,7 @@ async function runSearch(smart) {
 
   setStatus(`<span class="loader"></span> ${smart ? "Розумний пошук" : "Шукаю"}…`);
   setExportEnabled(false);
-  els.results.innerHTML = "";
+  renderSkeleton();
 
   try {
     const data = await searchJobs(opts);
@@ -66,13 +66,35 @@ async function runSearch(smart) {
     );
     setExportEnabled(lastResults.length > 0);
   } catch (err) {
+    els.results.innerHTML = "";
     setStatus(`<span class="err">Помилка: ${err.message}. Перевірте API_BASE у config.js.</span>`);
   }
 }
 
+function renderSkeleton(n = 6) {
+  els.results.classList.remove("list-view");
+  els.results.innerHTML = Array.from({ length: n })
+    .map(
+      () => `<article class="card skel-card">
+        <div class="skel skel-line lg"></div>
+        <div class="skel skel-line sm"></div>
+        <div class="skel skel-line md"></div>
+        <div class="skel-tags"><span class="skel skel-pill"></span><span class="skel skel-pill"></span></div>
+      </article>`
+    )
+    .join("");
+}
+
+function emptyState(text) {
+  return `<div class="empty-state">
+      <img src="./logo.svg" alt="" width="88" height="88" />
+      <p>${text}</p>
+    </div>`;
+}
+
 function renderResults(jobs) {
   if (!jobs.length) {
-    els.results.innerHTML = `<div class="empty">Нічого не знайдено. Спробуйте інший запит або джерела.</div>`;
+    els.results.innerHTML = emptyState("Нічого не знайдено. Спробуйте інший запит, прибрати фільтри або змінити джерела.");
     return;
   }
   els.results.innerHTML = jobs.map(card).join("");
@@ -127,3 +149,6 @@ initTheme();
 initTabs();
 initResume();
 initAuth(() => {}).catch((e) => console.error("Auth init failed:", e));
+
+// Friendly initial state
+els.results.innerHTML = emptyState("Почніть пошук — напр. «senior motion designer».");

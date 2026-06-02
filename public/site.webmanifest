@@ -1,0 +1,13 @@
+{
+  "name": "JobSearch Vibe",
+  "short_name": "JobSearch Vibe",
+  "description": "Розумний пошук вакансій в Україні + аналіз резюме.",
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#f3ece0",
+  "background_color": "#f3ece0",
+  "display": "standalone",
+  "start_url": "./"
+}
