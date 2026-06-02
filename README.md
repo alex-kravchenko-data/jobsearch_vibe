@@ -1,8 +1,22 @@
 # 🎯 JobSearch Vibe
 
-Агрегатор вакансій з українських job-бордів (**DOU**, **work.ua**, **Djinni**,
-опційно LinkedIn) з фільтрами, гридом результатів, експортом у CSV/JSON та
-кнопкою **«Розумний пошук»**, що відсіює нерелевантне й сортує найкращі вакансії.
+Агрегатор вакансій з українських job-бордів (**DOU**, **work.ua**, **robota.ua**,
+**Djinni**, **OLX**, опційно Jooble/LinkedIn) з фільтрами, гридом/списком
+результатів, експортом у CSV/JSON та кнопкою **«Розумний пошук»**, що відсіює
+нерелевантне й сортує найкращі вакансії. Плюс вкладки **аналізу резюме** та
+**профілю LinkedIn** на базі Claude.
+
+## Можливості
+
+- 🔍 **Пошук** з фільтрами (формат, місто, категорія, джерела), грід/список, експорт CSV/JSON.
+- 🌗 Перемикач **світлої/темної теми** (зберігається в браузері).
+- 💰 Окремий показ **рівня зарплати** + дати публікації на картці.
+- ✨ **Розумний пошук** з поясненням принципу роботи (евристика + опційний AI-rerank).
+- 📄 **Аналіз резюме** (PDF / DOCX / TXT / зображення) → оцінка, поради, покращена версія.
+- 💼 **Покращення профілю LinkedIn** → варіанти Headline, переписаний About, ключові слова.
+
+> Вкладки «Резюме» та «LinkedIn» працюють через Claude (`claude-opus-4-8`,
+> adaptive thinking, structured outputs) і потребують `ANTHROPIC_API_KEY`.
 
 ## Архітектура
 
@@ -102,14 +116,23 @@ npm run serve:frontend
 public/            статичний фронтенд (GitHub Pages)
   index.html
   css/styles.css
-  js/{config,auth,api,export,app}.js
+  js/{config,auth,api,export,ui,app,resume,linkedin}.js
 api/               serverless-функції (Vercel)
-  search.js        головний ендпоінт
-  _lib/            cors, нормалізація, ранжування, fetch
+  search.js        пошук вакансій
+  resume.js        аналіз резюме (Claude)
+  linkedin.js      аналіз профілю LinkedIn (Claude)
+  _lib/            cors, нормалізація, ранжування, fetch, anthropic
   _sources/        dou, workua, robotaua, jooble, djinni, olx, linkedin
 .github/workflows/deploy-pages.yml
 vercel.json
 ```
+
+## Інші ендпоінти
+
+- `POST /api/resume` — `{ filename, mimeType, dataBase64 }` → структурована оцінка резюме + покращена версія.
+- `POST /api/linkedin` — `{ profileText }` → поради щодо профілю + переписані секції.
+
+Обидва потребують `ANTHROPIC_API_KEY` (інакше повертають 503).
 
 ## Дисклеймер
 

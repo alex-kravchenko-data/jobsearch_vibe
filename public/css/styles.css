@@ -11,6 +11,19 @@
   --radius: 12px;
 }
 
+/* Light theme overrides */
+[data-theme="light"] {
+  --bg: #f4f5f8;
+  --panel: #ffffff;
+  --panel-2: #f0f2f6;
+  --border: #d9dee7;
+  --text: #1b2030;
+  --muted: #5a6478;
+  --primary: #3a5bd9;
+  --smart: #8a3ff0;
+  --accent: #0f9d6b;
+}
+
 * { box-sizing: border-box; }
 
 body {
@@ -139,3 +152,70 @@ body {
 
 .loader { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--muted); border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Topbar: tabs + theme toggle ── */
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.tabs { display: flex; gap: 4px; }
+.tab {
+  background: transparent; border: none; color: var(--muted);
+  font-size: 14px; padding: 8px 14px; border-radius: 8px; cursor: pointer;
+}
+.tab:hover { color: var(--text); background: var(--panel-2); }
+.tab.active { color: var(--text); background: var(--panel-2); font-weight: 600; }
+.icon-btn {
+  background: var(--panel-2); border: 1px solid var(--border); color: var(--text);
+  width: 36px; height: 36px; border-radius: 9px; cursor: pointer; font-size: 16px;
+}
+.icon-btn:hover { transform: translateY(-1px); }
+
+/* ── Tab panels ── */
+.panel-view { display: none; }
+.panel-view.active { display: block; }
+
+/* ── View toggle (grid/list) ── */
+.view-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.vbtn { background: var(--panel-2); border: none; color: var(--muted); padding: 9px 12px; font-size: 13px; cursor: pointer; }
+.vbtn.active { background: var(--primary); color: #0b1020; font-weight: 600; }
+
+/* List view layout */
+.grid.list-view { grid-template-columns: 1fr; }
+.grid.list-view .card { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 6px 14px; }
+.grid.list-view .card h3 { flex: 1 1 240px; }
+.grid.list-view .card p { display: none; }
+.grid.list-view .card .meta { margin-left: auto; }
+
+/* ── Card salary + date ── */
+.card .salary { color: var(--accent); font-weight: 600; font-size: 14px; }
+.tag.date { color: var(--muted); }
+
+/* ── Smart-search explainer ── */
+.explainer { margin-top: 14px; border-top: 1px dashed var(--border); padding-top: 12px; }
+.explainer summary { cursor: pointer; color: var(--smart); font-weight: 600; }
+.explainer-body { color: var(--muted); font-size: 14px; margin-top: 10px; }
+.explainer-body ol { padding-left: 20px; }
+.explainer-body li { margin: 6px 0; }
+.explainer-body code { background: var(--panel-2); padding: 1px 6px; border-radius: 5px; color: var(--text); }
+.muted { color: var(--muted); }
+
+/* ── Tool panels (resume / linkedin) ── */
+.tool-panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.tool-panel h2 { margin: 0 0 6px; }
+.upload-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 16px 0; }
+.upload-row input[type="file"] { color: var(--text); }
+.linkedin-input {
+  width: 100%; margin: 14px 0; padding: 12px; border-radius: 10px;
+  background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+  font-family: inherit; font-size: 14px; resize: vertical;
+}
+.linkedin-input:focus { outline: 2px solid var(--smart); }
+
+/* ── Analysis results ── */
+.analysis { margin-top: 18px; display: flex; flex-direction: column; gap: 16px; }
+.analysis .block { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.analysis h3 { margin: 0 0 8px; font-size: 15px; }
+.analysis ul { margin: 0; padding-left: 20px; }
+.analysis li { margin: 5px 0; }
+.score-badge { display: inline-block; background: var(--smart); color: #160b20; font-weight: 700; border-radius: 999px; padding: 2px 12px; margin-left: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.rewrite { width: 100%; min-height: 240px; padding: 12px; border-radius: 10px; background: var(--bg); color: var(--text); border: 1px solid var(--border); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; resize: vertical; }
+.rewrite-actions { display: flex; gap: 10px; margin-top: 8px; }

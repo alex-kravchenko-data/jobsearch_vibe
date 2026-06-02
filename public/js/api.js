@@ -15,3 +15,22 @@ export async function searchJobs({ query, remote, location, category, sources, s
   if (!res.ok) throw new Error(`API error ${res.status}`);
   return res.json();
 }
+
+async function postJson(path, body) {
+  const res = await fetch(apiUrl(path), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `API error ${res.status}`);
+  return data;
+}
+
+export function analyzeResume({ filename, mimeType, dataBase64 }) {
+  return postJson("/api/resume", { filename, mimeType, dataBase64 });
+}
+
+export function analyzeLinkedIn(profileText) {
+  return postJson("/api/linkedin", { profileText });
+}

@@ -9,7 +9,7 @@ export function exportJson(jobs) {
 }
 
 export function exportCsv(jobs) {
-  const cols = ["title", "company", "location", "remote", "source", "url", "postedAt"];
+  const cols = ["title", "company", "salary", "location", "remote", "source", "url", "postedAt"];
   const header = cols.join(",");
   const rows = jobs.map((j) => cols.map((c) => csvCell(j[c])).join(","));
   download([header, ...rows].join("\n"), "text/csv", `jobs-${stamp()}.csv`);
