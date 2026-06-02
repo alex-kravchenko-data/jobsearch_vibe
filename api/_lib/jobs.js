@@ -16,14 +16,37 @@ export function detectRemote(text = "") {
   return null; // unknown
 }
 
+// Matches salary mentions like "$2000", "1 500 – 3 000 $", "30000 грн", "від $1500".
+const SALARY_RE =
+  /(\$\s?\d[\d\s.,]*(?:\s?[–—-]\s?\$?\d[\d\s.,]*)?\s?(?:\$|usd|к|k)?|(?:від|from|до)\s?\$?\d[\d\s.,]+|\d[\d\s.,]{2,}\s?(?:грн|₴|uah|\$|usd|eur|€))/i;
+
+export function extractSalary(...texts) {
+  for (const t of texts) {
+    const m = (t || "").match(SALARY_RE);
+    if (m) return m[0].replace(/\s+/g, " ").trim();
+  }
+  return "";
+}
+
 export function normalizeJob(raw) {
   const title = (raw.title || "").trim();
   const url = (raw.url || "").trim();
+  let company = (raw.company || "").trim();
+
+  // Salary sometimes ends up glued into the company field (esp. work.ua/robota.ua).
+  // Prefer an explicit salary, otherwise sniff it out of title/company and strip it.
+  let salary = (raw.salary || "").trim();
+  if (!salary) salary = extractSalary(title, company);
+  if (salary && company.includes(salary)) {
+    company = company.replace(salary, "").replace(/^[\s•|,;·\-–—]+|[\s•|,;·\-–—]+$/g, "").trim();
+  }
+
   return {
     id: raw.id || hashId(`${raw.source}:${url || title}`),
     source: raw.source || "unknown",
     title,
-    company: (raw.company || "").trim(),
+    company,
+    salary,
     location: (raw.location || "").trim(),
     remote: raw.remote ?? detectRemote(`${title} ${raw.location || ""} ${raw.description || ""}`),
     url,

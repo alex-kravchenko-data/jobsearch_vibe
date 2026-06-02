@@ -1,78 +1,135 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="uk" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JobSearch Vibe — пошук вакансій</title>
-    <meta name="description" content="Агрегатор вакансій з DOU, work.ua, Djinni з розумним пошуком." />
+    <meta name="description" content="Агрегатор вакансій з DOU, work.ua, robota.ua, Djinni, OLX з розумним пошуком, аналізом резюме та LinkedIn." />
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
     <header class="topbar">
       <div class="brand">🎯 JobSearch <span>Vibe</span></div>
-      <div class="auth" id="auth">
-        <!-- filled by auth.js -->
-        <span class="auth-status">Гостьовий режим</span>
+      <nav class="tabs" id="tabs">
+        <button class="tab active" data-tab="search">🔍 Пошук</button>
+        <button class="tab" data-tab="resume">📄 Резюме</button>
+        <button class="tab" data-tab="linkedin">💼 LinkedIn</button>
+      </nav>
+      <div class="topbar-right">
+        <button class="icon-btn" id="theme-toggle" title="Світла / темна тема" aria-label="Перемкнути тему">🌙</button>
+        <div class="auth" id="auth">
+          <span class="auth-status">Гостьовий режим</span>
+        </div>
       </div>
     </header>
 
     <main class="container">
-      <section class="search-panel">
-        <form id="search-form" class="search-form">
-          <input
-            id="q"
-            class="search-input"
-            type="text"
-            placeholder="Напр.: senior motion designer"
-            autocomplete="off"
-          />
-          <div class="filters">
-            <label>
-              Формат
-              <select id="remote">
-                <option value="any">Будь-який</option>
-                <option value="remote">Remote</option>
-                <option value="office">Офіс</option>
-              </select>
-            </label>
-            <label>
-              Місто
-              <input id="location" type="text" placeholder="Київ, Львів…" />
-            </label>
-            <label>
-              Категорія (DOU)
-              <select id="category">
-                <option value="">Усі</option>
-                <option value="Design">Design</option>
-                <option value="3D/Animation">3D / Animation</option>
-                <option value="Front End">Front End</option>
-                <option value="Marketing">Marketing</option>
-              </select>
-            </label>
-            <fieldset class="sources">
-              <legend>Джерела</legend>
-              <label><input type="checkbox" class="src" value="dou" checked /> DOU</label>
-              <label><input type="checkbox" class="src" value="work.ua" checked /> work.ua</label>
-              <label><input type="checkbox" class="src" value="robota.ua" checked /> robota.ua</label>
-              <label><input type="checkbox" class="src" value="djinni" checked /> Djinni</label>
-              <label><input type="checkbox" class="src" value="olx" checked /> OLX</label>
-              <label title="Потребує JOOBLE_API_KEY на бекенді"><input type="checkbox" class="src" value="jooble" /> Jooble</label>
-              <label title="Потребує ENABLE_LINKEDIN=true на бекенді"><input type="checkbox" class="src" value="linkedin" /> LinkedIn ⚠️</label>
-            </fieldset>
-          </div>
-          <div class="actions">
-            <button type="submit" class="btn btn-primary">🔍 Пошук</button>
-            <button type="button" id="smart-btn" class="btn btn-smart">✨ Розумний пошук</button>
-            <span class="spacer"></span>
-            <button type="button" id="export-csv" class="btn btn-ghost" disabled>⬇ CSV</button>
-            <button type="button" id="export-json" class="btn btn-ghost" disabled>⬇ JSON</button>
-          </div>
-        </form>
+      <!-- ───────────────── ПОШУК ───────────────── -->
+      <section class="panel-view active" id="view-search">
+        <section class="search-panel">
+          <form id="search-form" class="search-form">
+            <input
+              id="q"
+              class="search-input"
+              type="text"
+              placeholder="Напр.: senior motion designer"
+              autocomplete="off"
+            />
+            <div class="filters">
+              <label>
+                Формат
+                <select id="remote">
+                  <option value="any">Будь-який</option>
+                  <option value="remote">Remote</option>
+                  <option value="office">Офіс</option>
+                </select>
+              </label>
+              <label>
+                Місто
+                <input id="location" type="text" placeholder="Київ, Львів…" />
+              </label>
+              <label>
+                Категорія (DOU)
+                <select id="category">
+                  <option value="">Усі</option>
+                  <option value="Design">Design</option>
+                  <option value="3D/Animation">3D / Animation</option>
+                  <option value="Front End">Front End</option>
+                  <option value="Marketing">Marketing</option>
+                </select>
+              </label>
+              <fieldset class="sources">
+                <legend>Джерела</legend>
+                <label><input type="checkbox" class="src" value="dou" checked /> DOU</label>
+                <label><input type="checkbox" class="src" value="work.ua" checked /> work.ua</label>
+                <label><input type="checkbox" class="src" value="robota.ua" checked /> robota.ua</label>
+                <label><input type="checkbox" class="src" value="djinni" checked /> Djinni</label>
+                <label><input type="checkbox" class="src" value="olx" checked /> OLX</label>
+                <label title="Потребує JOOBLE_API_KEY на бекенді"><input type="checkbox" class="src" value="jooble" /> Jooble</label>
+                <label title="Потребує ENABLE_LINKEDIN=true на бекенді"><input type="checkbox" class="src" value="linkedin" /> LinkedIn ⚠️</label>
+              </fieldset>
+            </div>
+            <div class="actions">
+              <button type="submit" class="btn btn-primary">🔍 Пошук</button>
+              <button type="button" id="smart-btn" class="btn btn-smart">✨ Розумний пошук</button>
+              <span class="spacer"></span>
+              <div class="view-toggle" id="view-toggle" title="Вигляд результатів">
+                <button type="button" class="vbtn active" data-view="grid">▦ Грід</button>
+                <button type="button" class="vbtn" data-view="list">☰ Список</button>
+              </div>
+              <button type="button" id="export-csv" class="btn btn-ghost" disabled>⬇ CSV</button>
+              <button type="button" id="export-json" class="btn btn-ghost" disabled>⬇ JSON</button>
+            </div>
+          </form>
+
+          <details class="explainer">
+            <summary>✨ Як працює «Розумний пошук»?</summary>
+            <div class="explainer-body">
+              <p>Звичайний пошук показує всі знайдені вакансії за вашим запитом. <b>Розумний пошук</b> додатково фільтрує «сміття» та сортує результати за релевантністю:</p>
+              <ol>
+                <li><b>Оцінка релевантності.</b> Кожна вакансія отримує бали: збіг у назві важить найбільше, далі — теги, далі — опис. Точна фраза в назві (напр. «motion designer») дає бонус, як і свіжі вакансії.</li>
+                <li><b>Відсіювання нерелевантного.</b> Вакансії з нульовою релевантністю прибираються (напр. Java-розробник не з'явиться у пошуку «motion designer»).</li>
+                <li><b>AI-переранжування (опційно).</b> Якщо на бекенді заданий <code>ANTHROPIC_API_KEY</code>, найкращі кандидати додатково впорядковує Claude, відкидаючи шум.</li>
+              </ol>
+              <p class="muted">Біля картки зʼявляється значок <span class="tag score">★ N</span> — це бал релевантності.</p>
+            </div>
+          </details>
+        </section>
+
+        <section class="status-bar" id="status"></section>
+        <section id="results" class="grid" aria-live="polite"></section>
       </section>
 
-      <section class="status-bar" id="status"></section>
+      <!-- ───────────────── РЕЗЮМЕ ───────────────── -->
+      <section class="panel-view" id="view-resume">
+        <div class="tool-panel">
+          <h2>📄 Аналіз резюме</h2>
+          <p class="muted">Завантажте резюме (PDF, DOCX, TXT, MD або зображення) — Claude дасть оцінку, конкретні поради та запропонує покращену версію. Макс. ~4 МБ.</p>
+          <div class="upload-row">
+            <input type="file" id="resume-file" accept=".pdf,.doc,.docx,.txt,.md,.rtf,image/*" />
+            <button type="button" id="resume-analyze" class="btn btn-smart" disabled>✨ Аналізувати</button>
+          </div>
+          <div class="status-bar" id="resume-status"></div>
+          <div id="resume-result" class="analysis"></div>
+        </div>
+      </section>
 
-      <section id="results" class="grid" aria-live="polite"></section>
+      <!-- ───────────────── LINKEDIN ───────────────── -->
+      <section class="panel-view" id="view-linkedin">
+        <div class="tool-panel">
+          <h2>💼 Покращення профілю LinkedIn</h2>
+          <p class="muted">
+            Вставте текст вашого профілю (Headline, About, досвід). Claude запропонує сильніші формулювання, ключові слова та переписані секції.
+            <br />💡 LinkedIn неможливо безпечно зчитати за посиланням (проти ToS), тож скопіюйте текст вручну або експортуйте профіль у PDF (LinkedIn → «Зберегти у PDF») і вставте сюди.
+          </p>
+          <textarea id="linkedin-text" class="linkedin-input" rows="12" placeholder="Headline: ...&#10;About: ...&#10;Досвід роботи: ..."></textarea>
+          <div class="actions">
+            <button type="button" id="linkedin-analyze" class="btn btn-smart">✨ Аналізувати</button>
+          </div>
+          <div class="status-bar" id="linkedin-status"></div>
+          <div id="linkedin-result" class="analysis"></div>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">

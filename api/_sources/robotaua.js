@@ -47,10 +47,16 @@ export async function fetchRobotaUa({ query = "", remote = "any", location = "" 
     const url =
       d.url ||
       (id ? `https://robota.ua/company${companyId}/vacancy${id}` : "");
+    const salary =
+      d.salary ||
+      (d.salaryFrom || d.salaryTo
+        ? [d.salaryFrom, d.salaryTo].filter(Boolean).join("–") + " $"
+        : "");
     return normalizeJob({
       source: "robota.ua",
       title: d.name || d.title || "",
       company: d.companyName || d.company?.name || "",
+      salary,
       location: d.cityName || d.city?.name || location || "",
       url,
       description: stripHtml(d.shortDescription || d.description || ""),

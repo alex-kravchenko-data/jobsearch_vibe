@@ -1,21 +1,14 @@
-// OLX.ua — Ukraine's biggest classifieds platform; its "Робота" (Jobs) section
-// has very wide reach, especially for non-IT and regional roles.
+// OLX.ua — best-effort search via the public offers API.
 //
-// OLX's web app is powered by a public JSON API (api/v1/offers). We query the
-// Jobs category. This is best-effort: OLX may rate-limit, change the API, or
-// require region params, so failures are non-fatal and mapping is defensive.
-// (Could not be live-verified here; category id 4 = "Робота / Бізнес".)
+// NOTE: passing a specific Jobs category_id returned HTTP 400 (the id appears
+// invalid / non-leaf), so we query by keyword only and let the downstream
+// keyword filter drop non-job results. OLX remains best-effort: it may
+// rate-limit or change its API, so failures are non-fatal.
 
 import { normalizeJob } from "../_lib/jobs.js";
 
-const JOBS_CATEGORY_ID = 4; // OLX.ua top-level "Робота" category
-
 export async function fetchOlx({ query = "", location = "" } = {}) {
-  const params = new URLSearchParams({
-    offset: "0",
-    limit: "40",
-    category_id: String(JOBS_CATEGORY_ID),
-  });
+  const params = new URLSearchParams({ offset: "0", limit: "40" });
   if (query) params.set("query", query);
 
   const resp = await fetch(`https://www.olx.ua/api/v1/offers/?${params.toString()}`, {

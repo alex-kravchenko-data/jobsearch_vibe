@@ -1,0 +1,89 @@
+// Resume tab: upload a file, send to /api/resume, render Claude's analysis.
+
+import { analyzeResume } from "./api.js";
+import { esc } from "./ui.js";
+
+export function initResume() {
+  const fileInput = document.getElementById("resume-file");
+  const btn = document.getElementById("resume-analyze");
+  const status = document.getElementById("resume-status");
+  const result = document.getElementById("resume-result");
+  if (!fileInput || !btn) return;
+
+  fileInput.addEventListener("change", () => {
+    btn.disabled = !fileInput.files?.length;
+  });
+
+  btn.addEventListener("click", async () => {
+    const file = fileInput.files?.[0];
+    if (!file) return;
+    if (file.size > 4.5 * 1024 * 1024) {
+      status.innerHTML = `<span class="err">Файл завеликий (макс. ~4 МБ).</span>`;
+      return;
+    }
+
+    btn.disabled = true;
+    result.innerHTML = "";
+    status.innerHTML = `<span class="loader"></span> Аналізую резюме (це може зайняти до хвилини)…`;
+
+    try {
+      const dataBase64 = await toBase64(file);
+      const data = await analyzeResume({ filename: file.name, mimeType: file.type, dataBase64 });
+      status.innerHTML = "";
+      renderResumeAnalysis(result, data);
+    } catch (err) {
+      status.innerHTML = `<span class="err">Помилка: ${esc(err.message)}</span>`;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+
+function renderResumeAnalysis(root, d) {
+  const strengths = (d.strengths || []).map((s) => `<li>${esc(s)}</li>`).join("");
+  const improvements = (d.improvements || [])
+    .map((i) => `<li><b>${esc(i.area)}:</b> ${esc(i.advice)}</li>`)
+    .join("");
+  const keywords = (d.keywords || []).map((k) => `<span class="tag">${esc(k)}</span>`).join("");
+
+  root.innerHTML = `
+    <div class="block">
+      <h3>Загальна оцінка <span class="score-badge">${esc(d.score)} / 10</span></h3>
+      <p>${esc(d.overall)}</p>
+    </div>
+    ${strengths ? `<div class="block"><h3>✅ Сильні сторони</h3><ul>${strengths}</ul></div>` : ""}
+    ${improvements ? `<div class="block"><h3>🔧 Що покращити</h3><ul>${improvements}</ul></div>` : ""}
+    ${keywords ? `<div class="block"><h3>🔑 Ключові слова для ATS</h3><div class="chips">${keywords}</div></div>` : ""}
+    <div class="block">
+      <h3>📝 Покращена версія резюме</h3>
+      <textarea class="rewrite" id="resume-rewrite"></textarea>
+      <div class="rewrite-actions">
+        <button type="button" class="btn btn-ghost" id="resume-copy">📋 Копіювати</button>
+        <button type="button" class="btn btn-ghost" id="resume-download">⬇ Завантажити .md</button>
+      </div>
+    </div>`;
+
+  const ta = root.querySelector("#resume-rewrite");
+  ta.value = d.improvedResume || "";
+  root.querySelector("#resume-copy").onclick = () => navigator.clipboard.writeText(ta.value);
+  root.querySelector("#resume-download").onclick = () => downloadText(ta.value, "improved-resume.md");
+}
+
+function toBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(",")[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function downloadText(text, filename) {
+  const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}

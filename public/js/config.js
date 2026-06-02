@@ -5,7 +5,7 @@ export const CONFIG = {
   // URL of your deployed Vercel API (no trailing slash).
   // For local dev with `vercel dev` this is usually http://localhost:3000.
   // Leave "" to use a same-origin "/api" (works if frontend+API are co-hosted).
-  API_BASE: "",
+  API_BASE: "https://jobsearch-vibe.vercel.app",
 
   // ── Supabase Auth (optional) ──
   // Create a free project at https://supabase.com, then paste the project URL

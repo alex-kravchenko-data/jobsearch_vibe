@@ -4,6 +4,9 @@ import { CONFIG } from "./config.js";
 import { initAuth, getUser, isConfigured } from "./auth.js";
 import { searchJobs } from "./api.js";
 import { exportCsv, exportJson } from "./export.js";
+import { esc, formatDate, initTheme, initTabs } from "./ui.js";
+import { initResume } from "./resume.js";
+import { initLinkedIn } from "./linkedin.js";
 
 const els = {
   form: document.getElementById("search-form"),
@@ -52,8 +55,9 @@ async function runSearch(smart) {
     lastResults = data.jobs || [];
     renderResults(lastResults);
 
-    const errNote = Object.keys(data.errors || {}).length
-      ? ` · <span class="err">помилки джерел: ${Object.keys(data.errors).join(", ")}</span>`
+    const errEntries = Object.entries(data.errors || {});
+    const errNote = errEntries.length
+      ? ` · <span class="err" title="${esc(errEntries.map(([k, v]) => `${k}: ${v}`).join(" | "))}">помилки джерел: ${errEntries.map(([k, v]) => `${esc(k)} (${esc(String(v))})`).join(", ")}</span>`
       : "";
     const smartNote = smart ? " (відсортовано за релевантністю)" : "";
     setStatus(
@@ -77,14 +81,18 @@ function card(j) {
   const remoteTag = j.remote === true ? `<span class="tag remote">Remote</span>` : "";
   const scoreTag = j._score ? `<span class="tag score">★ ${j._score}</span>` : "";
   const loc = j.location ? `<span class="tag">${esc(j.location)}</span>` : "";
+  const dateStr = formatDate(j.postedAt);
+  const dateTag = dateStr ? `<span class="tag date">📅 ${esc(dateStr)}</span>` : "";
+  const salary = j.salary ? `<div class="salary">💰 ${esc(j.salary)}</div>` : "";
   const desc = j.description ? `<p>${esc(j.description.slice(0, 220))}</p>` : "";
   return `
     <article class="card">
       <h3><a href="${esc(j.url)}" target="_blank" rel="noopener">${esc(j.title) || "Без назви"}</a></h3>
       ${j.company ? `<div class="company">${esc(j.company)}</div>` : ""}
+      ${salary}
       <div class="meta">
         <span class="tag src">${esc(j.source)}</span>
-        ${remoteTag}${loc}${scoreTag}
+        ${remoteTag}${loc}${dateTag}${scoreTag}
       </div>
       ${desc}
     </article>`;
@@ -94,11 +102,6 @@ function setStatus(html) { els.status.innerHTML = html; }
 function setExportEnabled(on) {
   els.exportCsv.disabled = !on;
   els.exportJson.disabled = !on;
-}
-function esc(s = "") {
-  return s.replace(/[&<>"']/g, (c) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
-  );
 }
 
 // ── Wire up events ──
@@ -110,4 +113,17 @@ els.smartBtn.addEventListener("click", () => runSearch(true));
 els.exportCsv.addEventListener("click", () => exportCsv(lastResults));
 els.exportJson.addEventListener("click", () => exportJson(lastResults));
 
+// View toggle (grid / list)
+document.querySelectorAll(".vbtn").forEach((b) => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".vbtn").forEach((x) => x.classList.toggle("active", x === b));
+    els.results.classList.toggle("list-view", b.dataset.view === "list");
+  });
+});
+
+// Init shared UI + the other tabs
+initTheme();
+initTabs();
+initResume();
+initLinkedIn();
 initAuth(() => {}).catch((e) => console.error("Auth init failed:", e));
