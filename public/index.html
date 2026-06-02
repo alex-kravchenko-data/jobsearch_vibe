@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JobSearch Vibe — пошук вакансій</title>
+    <meta name="description" content="Агрегатор вакансій з DOU, work.ua, Djinni з розумним пошуком." />
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">🎯 JobSearch <span>Vibe</span></div>
+      <div class="auth" id="auth">
+        <!-- filled by auth.js -->
+        <span class="auth-status">Гостьовий режим</span>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="search-panel">
+        <form id="search-form" class="search-form">
+          <input
+            id="q"
+            class="search-input"
+            type="text"
+            placeholder="Напр.: senior motion designer"
+            autocomplete="off"
+          />
+          <div class="filters">
+            <label>
+              Формат
+              <select id="remote">
+                <option value="any">Будь-який</option>
+                <option value="remote">Remote</option>
+                <option value="office">Офіс</option>
+              </select>
+            </label>
+            <label>
+              Місто
+              <input id="location" type="text" placeholder="Київ, Львів…" />
+            </label>
+            <label>
+              Категорія (DOU)
+              <select id="category">
+                <option value="">Усі</option>
+                <option value="Design">Design</option>
+                <option value="3D/Animation">3D / Animation</option>
+                <option value="Front End">Front End</option>
+                <option value="Marketing">Marketing</option>
+              </select>
+            </label>
+            <fieldset class="sources">
+              <legend>Джерела</legend>
+              <label><input type="checkbox" class="src" value="dou" checked /> DOU</label>
+              <label><input type="checkbox" class="src" value="work.ua" checked /> work.ua</label>
+              <label><input type="checkbox" class="src" value="robota.ua" checked /> robota.ua</label>
+              <label><input type="checkbox" class="src" value="djinni" checked /> Djinni</label>
+              <label><input type="checkbox" class="src" value="olx" checked /> OLX</label>
+              <label title="Потребує JOOBLE_API_KEY на бекенді"><input type="checkbox" class="src" value="jooble" /> Jooble</label>
+              <label title="Потребує ENABLE_LINKEDIN=true на бекенді"><input type="checkbox" class="src" value="linkedin" /> LinkedIn ⚠️</label>
+            </fieldset>
+          </div>
+          <div class="actions">
+            <button type="submit" class="btn btn-primary">🔍 Пошук</button>
+            <button type="button" id="smart-btn" class="btn btn-smart">✨ Розумний пошук</button>
+            <span class="spacer"></span>
+            <button type="button" id="export-csv" class="btn btn-ghost" disabled>⬇ CSV</button>
+            <button type="button" id="export-json" class="btn btn-ghost" disabled>⬇ JSON</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="status-bar" id="status"></section>
+
+      <section id="results" class="grid" aria-live="polite"></section>
+    </main>
+
+    <footer class="footer">
+      Демо-проєкт. Дані беруться з публічних джерел; поважайте умови використання сайтів.
+    </footer>
+
+    <script type="module" src="./js/app.js"></script>
+  </body>
+</html>
