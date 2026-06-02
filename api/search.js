@@ -5,32 +5,27 @@
 //   remote   - "remote" | "office" | "any"  (default "any")
 //   location - free-text city filter (e.g. "Київ")
 //   tools    - comma-separated tool phrases to require in the vacancy text
-//   sources  - comma list to restrict sources (dou,work.ua,robota.ua,djinni,jooble,linkedin)
+//   sources  - comma list to restrict sources (dou,work.ua,robota.ua)
 //   smart    - "1" to enable "smart search" relevance ranking
 //   limit    - max results (default 100)
 //
 // Aggregates all enabled sources in parallel, normalizes, dedupes, filters,
 // and (optionally) ranks. A single failing source never breaks the response.
+//
+// Only reliable, datacenter-accessible sources are wired up. Djinni/LinkedIn
+// were dropped because they return 403 to serverless (Cloudflare / anti-bot).
 
 import { applyCors } from "./_lib/cors.js";
 import { dedupe, applyFilters } from "./_lib/jobs.js";
 import { smartRank } from "./_lib/rank.js";
 import { fetchDou } from "./_sources/dou.js";
 import { fetchWorkUa } from "./_sources/workua.js";
-import { fetchDjinni } from "./_sources/djinni.js";
 import { fetchRobotaUa } from "./_sources/robotaua.js";
-import { fetchJooble, joobleEnabled } from "./_sources/jooble.js";
-import { fetchLinkedIn, linkedinEnabled } from "./_sources/linkedin.js";
 
 const ALL_SOURCES = {
   dou: (opts) => fetchDou({ query: opts.query, category: opts.category }),
   "work.ua": (opts) => fetchWorkUa({ query: opts.query, remote: opts.remote }),
   "robota.ua": (opts) => fetchRobotaUa({ query: opts.query, remote: opts.remote, location: opts.location }),
-  djinni: (opts) => fetchDjinni({ query: opts.query, remote: opts.remote }),
-  jooble: (opts) =>
-    fetchJooble({ query: opts.query, location: opts.location || "Україна", remote: opts.remote }),
-  linkedin: (opts) =>
-    fetchLinkedIn({ query: opts.query, location: opts.location || "Ukraine", remote: opts.remote }),
 };
 
 export default async function handler(req, res) {
@@ -46,17 +41,11 @@ export default async function handler(req, res) {
   const smart = p.get("smart") === "1";
   const limit = Math.min(parseInt(p.get("limit") || "100", 10) || 100, 300);
 
-  let requested = (p.get("sources") || "dou,work.ua,robota.ua,djinni")
+  let requested = (p.get("sources") || "dou,work.ua,robota.ua")
     .split(",")
     .map((s) => s.trim())
     .filter((s) => ALL_SOURCES[s]);
-  // Drop sources whose required credentials/flags are missing.
-  if (requested.includes("linkedin") && !linkedinEnabled()) {
-    requested = requested.filter((s) => s !== "linkedin");
-  }
-  if (requested.includes("jooble") && !joobleEnabled()) {
-    requested = requested.filter((s) => s !== "jooble");
-  }
+  if (requested.length === 0) requested = Object.keys(ALL_SOURCES);
 
   const opts = { query, remote, location, category };
 

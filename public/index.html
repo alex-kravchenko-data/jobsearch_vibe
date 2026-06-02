@@ -1,15 +1,19 @@
 <!DOCTYPE html>
-<html lang="uk" data-theme="dark">
+<html lang="uk" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JobSearch Vibe — пошук вакансій</title>
-    <meta name="description" content="Агрегатор вакансій з DOU, work.ua, robota.ua, Djinni, OLX з розумним пошуком, аналізом резюме та LinkedIn." />
+    <meta name="description" content="Агрегатор вакансій з DOU, work.ua, robota.ua з розумним пошуком та аналізом резюме." />
+    <link rel="icon" type="image/svg+xml" href="./logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="./css/styles.css" />
   </head>
   <body>
     <header class="topbar">
-      <div class="brand">🎯 JobSearch <span>Vibe</span></div>
+      <div class="brand"><img class="brand-logo" src="./logo.svg" alt="" width="36" height="36" /> JobSearch <span>Vibe</span></div>
       <nav class="tabs" id="tabs">
         <button class="tab active" data-tab="search">🔍 Пошук</button>
         <button class="tab" data-tab="resume">📄 Резюме</button>
@@ -66,9 +70,6 @@
                 <label><input type="checkbox" class="src" value="dou" checked /> DOU</label>
                 <label><input type="checkbox" class="src" value="work.ua" checked /> work.ua</label>
                 <label><input type="checkbox" class="src" value="robota.ua" checked /> robota.ua</label>
-                <label title="Часто блокується (403) — best-effort"><input type="checkbox" class="src" value="djinni" /> Djinni ⚠️</label>
-                <label title="Потребує JOOBLE_API_KEY на бекенді"><input type="checkbox" class="src" value="jooble" /> Jooble</label>
-                <label title="Потребує ENABLE_LINKEDIN=true на бекенді"><input type="checkbox" class="src" value="linkedin" /> LinkedIn ⚠️</label>
               </fieldset>
             </div>
             <div class="actions">

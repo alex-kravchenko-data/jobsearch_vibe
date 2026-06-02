@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="JobSearch Vibe">
+  <defs>
+    <linearGradient id="tabby" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8d7a63"/><stop offset="1" stop-color="#6f5d49"/></linearGradient>
+    <radialGradient id="eye" cx="0.5" cy="0.4" r="0.7"><stop offset="0" stop-color="#b6e36b"/><stop offset="1" stop-color="#5a9b2f"/></radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="#f1e9da"/>
+  <ellipse cx="256" cy="438" rx="150" ry="20" fill="#00000010"/>
+  <path d="M256 196 C150 196 116 286 116 360 C116 410 150 430 256 430 C362 430 396 410 396 360 C396 286 362 196 256 196 Z" fill="#fbfbf8"/>
+  <ellipse cx="212" cy="424" rx="34" ry="22" fill="#fff"/><ellipse cx="300" cy="424" rx="34" ry="22" fill="#fff"/>
+  <path d="M150 196 L150 116 L226 178 Z" fill="url(#tabby)"/><path d="M362 196 L362 116 L286 178 Z" fill="url(#tabby)"/>
+  <path d="M168 188 L168 142 L208 178 Z" fill="#e8a7b8"/><path d="M344 188 L344 142 L304 178 Z" fill="#e8a7b8"/>
+  <path d="M256 120 C186 120 150 168 150 230 C150 300 196 352 256 352 C316 352 362 300 362 230 C362 168 326 120 256 120 Z" fill="#fbfbf8"/>
+  <path d="M150 196 C150 150 186 120 256 120 C326 120 362 150 362 196 C350 214 338 196 330 206 C320 220 308 200 298 210 C290 218 284 206 278 196 L268 150 L256 178 L244 150 L234 196 C228 206 222 218 214 210 C204 200 192 220 182 206 C174 196 162 214 150 196 Z" fill="url(#tabby)"/>
+  <path d="M206 150 L210 188" stroke="#56473655" stroke-width="7" stroke-linecap="round"/>
+  <path d="M306 150 L302 188" stroke="#56473655" stroke-width="7" stroke-linecap="round"/>
+  <ellipse cx="212" cy="250" rx="30" ry="26" fill="url(#eye)"/><ellipse cx="300" cy="250" rx="30" ry="26" fill="url(#eye)"/>
+  <ellipse cx="212" cy="252" rx="9" ry="20" fill="#1a1f12"/><ellipse cx="300" cy="252" rx="9" ry="20" fill="#1a1f12"/>
+  <circle cx="205" cy="242" r="5" fill="#fff" opacity="0.9"/><circle cx="293" cy="242" r="5" fill="#fff" opacity="0.9"/>
+  <path d="M242 296 L270 296 L256 312 Z" fill="#e58aa0"/>
+  <path d="M256 312 C256 326 240 330 230 322" fill="none" stroke="#c9b9a6" stroke-width="4" stroke-linecap="round"/>
+  <path d="M256 312 C256 326 272 330 282 322" fill="none" stroke="#c9b9a6" stroke-width="4" stroke-linecap="round"/>
+  <g stroke="#c9b9a6" stroke-width="4" stroke-linecap="round" opacity="0.95">
+    <line x1="232" y1="300" x2="150" y2="288"/><line x1="232" y1="308" x2="152" y2="316"/>
+    <line x1="280" y1="300" x2="362" y2="288"/><line x1="280" y1="308" x2="360" y2="316"/>
+  </g>
+</svg>

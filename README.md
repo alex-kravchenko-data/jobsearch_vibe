@@ -46,17 +46,10 @@ GitHub Pages  ──(fetch)──►  Vercel Serverless API  ──►  DOU RSS 
 | DOU       | Офіційні RSS-стрічки           | ✅ висока   | Найкраще IT-джерело, легально |
 | work.ua   | Парсинг HTML                   | 🟡 середня | #1 загальний борд (~106K) |
 | robota.ua | Публічний JSON API (api.robota.ua) | 🟡 середня | #2 загальний борд (~110K) |
-| Jooble    | Офіційний API (потрібен ключ)  | ✅ висока   | Мета-агрегатор сотень джерел |
-| Djinni    | Парсинг HTML (best-effort)     | 🔴 блок    | Cloudflare 403 з дата-центрів (Vercel) |
-| LinkedIn  | Неофіційний guest-endpoint     | 🔴 блок     | **Вимкнено за замовч.**, 403 + проти ToS |
 
-> **Jooble** вмикається, коли заданий `JOOBLE_API_KEY` (безкоштовний ключ на
-> [jooble.org/api/about](https://jooble.org/api/about)). Без ключа джерело
-> просто пропускається.
-
-> ⚠️ LinkedIn-скрапінг порушує умови використання LinkedIn і легко блокується.
-> Вмикається лише через `ENABLE_LINKEDIN=true`. Використовуйте на власний ризик.
-> Рекомендований шлях — DOU / work.ua / Djinni.
+> Залишено лише надійні, доступні з дата-центру джерела. Djinni та LinkedIn
+> прибрані, бо віддають `403` для serverless (Cloudflare / анти-бот) — без
+> residential-проксі з Vercel вони не працюють.
 
 ## Локальний запуск
 
@@ -79,8 +72,9 @@ npm run serve:frontend
 2. На [vercel.com](https://vercel.com) → **Import Project** → виберіть репо.
 3. У **Settings → Environment Variables** додайте (див. `.env.example`):
    - `ALLOWED_ORIGIN` = `https://<ваш-логін>.github.io`
-   - `ANTHROPIC_API_KEY` *(опційно)*
-   - `ENABLE_LINKEDIN` *(опційно)*
+   - `ANTHROPIC_API_KEY` (для вкладки «Резюме»)
+   - `ANALYSIS_ACCESS_CODE` *(опційно — код доступу до резюме)*
+   - `ANALYSIS_MODEL` *(опційно — за замовч. `claude-haiku-4-5`)*
 4. Після деплою скопіюйте URL виду `https://<проєкт>.vercel.app`.
 
 ### 2. Фронтенд → GitHub Pages
@@ -100,7 +94,7 @@ npm run serve:frontend
 | `location` | місто (фільтр за підрядком)                      |
 | `category` | категорія DOU (`Design`, `3D/Animation`, …)     |
 | `tools`    | через кому: фрази-інструменти, які мають бути в тексті вакансії |
-| `sources`  | через кому: `dou,work.ua,robota.ua,djinni,jooble,linkedin` |
+| `sources`  | через кому: `dou,work.ua,robota.ua` |
 | `smart`    | `1` — увімкнути розумне ранжування              |
 | `limit`    | макс. результатів (за замовч. 100)              |
 
@@ -121,7 +115,7 @@ api/               serverless-функції (Vercel)
   search.js        пошук вакансій
   resume.js        аналіз резюме (Claude)
   _lib/            cors, нормалізація, ранжування, fetch, anthropic
-  _sources/        dou, workua, robotaua, jooble, djinni, linkedin
+  _sources/        dou, workua, robotaua
 .github/workflows/deploy-pages.yml
 vercel.json
 ```
