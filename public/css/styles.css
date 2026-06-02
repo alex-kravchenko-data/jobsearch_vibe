@@ -1,37 +1,43 @@
+/* ── Warm editorial theme ──
+   Light (default) = cream paper + terracotta; dark = warm companion. */
 :root {
-  --bg: #0f1116;
-  --panel: #181b23;
-  --panel-2: #20242f;
-  --border: #2a2f3a;
-  --text: #e7e9ee;
-  --muted: #9aa3b2;
-  --primary: #6c8cff;
-  --smart: #b06cff;
-  --accent: #36d39a;
-  --radius: 12px;
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --radius: 16px;
+
+  /* dark (warm) companion palette */
+  --bg: #1c1813;
+  --panel: #262019;
+  --panel-2: #2f2820;
+  --border: #3a3228;
+  --text: #efe7da;
+  --muted: #a99e8e;
+  --primary: #d6794e;
+  --smart: #c08fc4;
+  --accent: #6fbf8f;
 }
 
-/* Light theme overrides */
+/* Light = warm editorial (default) */
 [data-theme="light"] {
-  --bg: #f4f5f8;
-  --panel: #ffffff;
-  --panel-2: #f0f2f6;
-  --border: #d9dee7;
-  --text: #1b2030;
-  --muted: #5a6478;
-  --primary: #3a5bd9;
-  --smart: #8a3ff0;
-  --accent: #0f9d6b;
+  --bg: #f3ece0;
+  --panel: #fffdf8;
+  --panel-2: #efe6d6;
+  --border: #e2d8c8;
+  --text: #2b2620;
+  --muted: #7a7165;
+  --primary: #c0653c;
+  --smart: #9b6b9e;
+  --accent: #3f7d56;
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
   background: var(--bg);
   color: var(--text);
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .topbar {
@@ -45,8 +51,23 @@ body {
   top: 0;
   z-index: 10;
 }
-.brand { font-weight: 700; font-size: 18px; }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
 .brand span { color: var(--primary); }
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  display: block;
+}
 
 .auth { display: flex; align-items: center; gap: 10px; font-size: 14px; }
 .auth-status { color: var(--muted); }
@@ -197,18 +218,11 @@ body {
 .explainer-body code { background: var(--panel-2); padding: 1px 6px; border-radius: 5px; color: var(--text); }
 .muted { color: var(--muted); }
 
-/* ── Tool panels (resume / linkedin) ── */
+/* ── Tool panel (resume) ── */
 .tool-panel { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
 .tool-panel h2 { margin: 0 0 6px; }
 .upload-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 16px 0; }
 .upload-row input[type="file"] { color: var(--text); }
-.linkedin-input {
-  width: 100%; margin: 14px 0; padding: 12px; border-radius: 10px;
-  background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
-  font-family: inherit; font-size: 14px; resize: vertical;
-}
-.linkedin-input:focus { outline: 2px solid var(--smart); }
-
 /* ── Analysis results ── */
 .analysis { margin-top: 18px; display: flex; flex-direction: column; gap: 16px; }
 .analysis .block { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
@@ -219,3 +233,14 @@ body {
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .rewrite { width: 100%; min-height: 240px; padding: 12px; border-radius: 10px; background: var(--bg); color: var(--text); border: 1px solid var(--border); font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 13px; resize: vertical; }
 .rewrite-actions { display: flex; gap: 10px; margin-top: 8px; }
+
+/* ── Editorial typography + accents ── */
+.card h3, .card h3 a { font-family: var(--font-serif); font-weight: 700; letter-spacing: -0.01em; }
+.tool-panel h2, .analysis h3 { font-family: var(--font-serif); }
+.card .company { color: var(--primary); }
+.card .salary { color: var(--text); }
+.btn-primary, .btn-smart, .vbtn.active { color: #fff; }
+.tab.active { color: var(--primary); }
+.search-panel { box-shadow: 0 1px 0 rgba(0,0,0,0.02); }
+.card { transition: transform .08s ease, box-shadow .15s ease; }
+.card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(43,38,32,0.08); }

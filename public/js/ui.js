@@ -16,7 +16,7 @@ export function formatDate(iso) {
 // ── Theme toggle (persisted in localStorage) ──
 export function initTheme() {
   const btn = document.getElementById("theme-toggle");
-  const saved = localStorage.getItem("theme") || "dark";
+  const saved = localStorage.getItem("theme") || "light";
   apply(saved);
   btn?.addEventListener("click", () => {
     const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
