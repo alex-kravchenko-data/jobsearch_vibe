@@ -30,7 +30,12 @@ export async function fetchLinkedIn({ query = "", location = "Ukraine", remote =
     "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?" +
     params.toString();
 
-  const html = await fetchText(url, { timeout: 12000 });
+  // LinkedIn aggressively blocks datacenter IPs (403). A browser-like Referer
+  // helps marginally; reliable access needs a residential proxy.
+  const html = await fetchText(url, {
+    timeout: 12000,
+    headers: { Referer: "https://www.linkedin.com/jobs/search/" },
+  });
   const $ = cheerio.load(html);
   const jobs = [];
 

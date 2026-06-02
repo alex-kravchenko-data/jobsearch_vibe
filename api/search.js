@@ -4,7 +4,8 @@
 //   q        - search query (e.g. "senior motion designer")
 //   remote   - "remote" | "office" | "any"  (default "any")
 //   location - free-text city filter (e.g. "Київ")
-//   sources  - comma list to restrict sources (dou,work.ua,djinni,linkedin)
+//   tools    - comma-separated tool phrases to require in the vacancy text
+//   sources  - comma list to restrict sources (dou,work.ua,robota.ua,djinni,jooble,linkedin)
 //   smart    - "1" to enable "smart search" relevance ranking
 //   limit    - max results (default 100)
 //
@@ -18,7 +19,6 @@ import { fetchDou } from "./_sources/dou.js";
 import { fetchWorkUa } from "./_sources/workua.js";
 import { fetchDjinni } from "./_sources/djinni.js";
 import { fetchRobotaUa } from "./_sources/robotaua.js";
-import { fetchOlx } from "./_sources/olx.js";
 import { fetchJooble, joobleEnabled } from "./_sources/jooble.js";
 import { fetchLinkedIn, linkedinEnabled } from "./_sources/linkedin.js";
 
@@ -27,7 +27,6 @@ const ALL_SOURCES = {
   "work.ua": (opts) => fetchWorkUa({ query: opts.query, remote: opts.remote }),
   "robota.ua": (opts) => fetchRobotaUa({ query: opts.query, remote: opts.remote, location: opts.location }),
   djinni: (opts) => fetchDjinni({ query: opts.query, remote: opts.remote }),
-  olx: (opts) => fetchOlx({ query: opts.query, location: opts.location }),
   jooble: (opts) =>
     fetchJooble({ query: opts.query, location: opts.location || "Україна", remote: opts.remote }),
   linkedin: (opts) =>
@@ -43,10 +42,11 @@ export default async function handler(req, res) {
   const remote = p.get("remote") || "any";
   const location = (p.get("location") || "").trim();
   const category = (p.get("category") || "").trim();
+  const tools = (p.get("tools") || "").trim();
   const smart = p.get("smart") === "1";
   const limit = Math.min(parseInt(p.get("limit") || "100", 10) || 100, 300);
 
-  let requested = (p.get("sources") || "dou,work.ua,robota.ua,djinni,olx")
+  let requested = (p.get("sources") || "dou,work.ua,robota.ua,djinni")
     .split(",")
     .map((s) => s.trim())
     .filter((s) => ALL_SOURCES[s]);
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
   });
 
   jobs = dedupe(jobs);
-  jobs = applyFilters(jobs, { query, remote, location });
+  jobs = applyFilters(jobs, { query, remote, location, tools });
 
   let ranked;
   if (smart && query) {

@@ -1,12 +1,23 @@
-// Thin client over the serverless /api/search endpoint.
+// Thin client over the serverless API.
 
 import { apiUrl } from "./config.js";
 
-export async function searchJobs({ query, remote, location, category, sources, smart }) {
+const ACCESS_CODE_KEY = "jsv_access_code";
+
+export function getAccessCode() {
+  return localStorage.getItem(ACCESS_CODE_KEY) || "";
+}
+export function setAccessCode(code) {
+  if (code) localStorage.setItem(ACCESS_CODE_KEY, code);
+  else localStorage.removeItem(ACCESS_CODE_KEY);
+}
+
+export async function searchJobs({ query, remote, location, tools, category, sources, smart }) {
   const params = new URLSearchParams();
   if (query) params.set("q", query);
   if (remote && remote !== "any") params.set("remote", remote);
   if (location) params.set("location", location);
+  if (tools) params.set("tools", tools);
   if (category) params.set("category", category);
   if (sources?.length) params.set("sources", sources.join(","));
   if (smart) params.set("smart", "1");
@@ -17,20 +28,24 @@ export async function searchJobs({ query, remote, location, category, sources, s
 }
 
 async function postJson(path, body) {
+  const headers = { "Content-Type": "application/json" };
+  const code = getAccessCode();
+  if (code) headers["x-access-code"] = code;
+
   const res = await fetch(apiUrl(path), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers,
     body: JSON.stringify(body),
   });
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || `API error ${res.status}`);
+  if (!res.ok) {
+    const err = new Error(data.error || `API error ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
   return data;
 }
 
 export function analyzeResume({ filename, mimeType, dataBase64 }) {
   return postJson("/api/resume", { filename, mimeType, dataBase64 });
-}
-
-export function analyzeLinkedIn(profileText) {
-  return postJson("/api/linkedin", { profileText });
 }

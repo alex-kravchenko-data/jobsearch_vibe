@@ -7,7 +7,7 @@
 // Requires ANTHROPIC_API_KEY on the backend.
 
 import { applyCors } from "./_lib/cors.js";
-import { getClient, analyzeStructured, readJsonBody } from "./_lib/anthropic.js";
+import { getClient, analyzeStructured, readJsonBody, checkAccessCode } from "./_lib/anthropic.js";
 
 const SYSTEM = `Ти — досвідчений кар'єрний консультант і рекрутер в IT та креативних індустріях (зокрема motion/graphic design).
 Аналізуй резюме кандидата уважно й конструктивно. Відповідай українською.
@@ -77,6 +77,11 @@ export default async function handler(req, res) {
   if (applyCors(req, res)) return;
   if (req.method !== "POST") {
     res.status(405).json({ error: "Use POST" });
+    return;
+  }
+
+  if (!checkAccessCode(req)) {
+    res.status(401).json({ error: "Невірний або відсутній код доступу." });
     return;
   }
 

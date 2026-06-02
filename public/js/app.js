@@ -6,13 +6,13 @@ import { searchJobs } from "./api.js";
 import { exportCsv, exportJson } from "./export.js";
 import { esc, formatDate, initTheme, initTabs } from "./ui.js";
 import { initResume } from "./resume.js";
-import { initLinkedIn } from "./linkedin.js";
 
 const els = {
   form: document.getElementById("search-form"),
   q: document.getElementById("q"),
   remote: document.getElementById("remote"),
   location: document.getElementById("location"),
+  tools: document.getElementById("tools"),
   category: document.getElementById("category"),
   smartBtn: document.getElementById("smart-btn"),
   status: document.getElementById("status"),
@@ -29,6 +29,7 @@ function readForm(smart) {
     query: els.q.value.trim(),
     remote: els.remote.value,
     location: els.location.value.trim(),
+    tools: els.tools.value.trim(),
     category: els.category.value,
     sources,
     smart,
@@ -125,5 +126,4 @@ document.querySelectorAll(".vbtn").forEach((b) => {
 initTheme();
 initTabs();
 initResume();
-initLinkedIn();
 initAuth(() => {}).catch((e) => console.error("Auth init failed:", e));

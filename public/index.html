@@ -13,7 +13,6 @@
       <nav class="tabs" id="tabs">
         <button class="tab active" data-tab="search">🔍 Пошук</button>
         <button class="tab" data-tab="resume">📄 Резюме</button>
-        <button class="tab" data-tab="linkedin">💼 LinkedIn</button>
       </nav>
       <div class="topbar-right">
         <button class="icon-btn" id="theme-toggle" title="Світла / темна тема" aria-label="Перемкнути тему">🌙</button>
@@ -49,6 +48,10 @@
                 <input id="location" type="text" placeholder="Київ, Львів…" />
               </label>
               <label>
+                Інструменти (в описі)
+                <input id="tools" type="text" placeholder="After Effects, Tableau…" />
+              </label>
+              <label>
                 Категорія (DOU)
                 <select id="category">
                   <option value="">Усі</option>
@@ -63,8 +66,7 @@
                 <label><input type="checkbox" class="src" value="dou" checked /> DOU</label>
                 <label><input type="checkbox" class="src" value="work.ua" checked /> work.ua</label>
                 <label><input type="checkbox" class="src" value="robota.ua" checked /> robota.ua</label>
-                <label><input type="checkbox" class="src" value="djinni" checked /> Djinni</label>
-                <label><input type="checkbox" class="src" value="olx" checked /> OLX</label>
+                <label title="Часто блокується (403) — best-effort"><input type="checkbox" class="src" value="djinni" /> Djinni ⚠️</label>
                 <label title="Потребує JOOBLE_API_KEY на бекенді"><input type="checkbox" class="src" value="jooble" /> Jooble</label>
                 <label title="Потребує ENABLE_LINKEDIN=true на бекенді"><input type="checkbox" class="src" value="linkedin" /> LinkedIn ⚠️</label>
               </fieldset>
@@ -114,22 +116,6 @@
         </div>
       </section>
 
-      <!-- ───────────────── LINKEDIN ───────────────── -->
-      <section class="panel-view" id="view-linkedin">
-        <div class="tool-panel">
-          <h2>💼 Покращення профілю LinkedIn</h2>
-          <p class="muted">
-            Вставте текст вашого профілю (Headline, About, досвід). Claude запропонує сильніші формулювання, ключові слова та переписані секції.
-            <br />💡 LinkedIn неможливо безпечно зчитати за посиланням (проти ToS), тож скопіюйте текст вручну або експортуйте профіль у PDF (LinkedIn → «Зберегти у PDF») і вставте сюди.
-          </p>
-          <textarea id="linkedin-text" class="linkedin-input" rows="12" placeholder="Headline: ...&#10;About: ...&#10;Досвід роботи: ..."></textarea>
-          <div class="actions">
-            <button type="button" id="linkedin-analyze" class="btn btn-smart">✨ Аналізувати</button>
-          </div>
-          <div class="status-bar" id="linkedin-status"></div>
-          <div id="linkedin-result" class="analysis"></div>
-        </div>
-      </section>
     </main>
 
     <footer class="footer">

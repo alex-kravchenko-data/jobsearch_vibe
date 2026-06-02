@@ -28,10 +28,26 @@ export function extractSalary(...texts) {
   return "";
 }
 
+// Splits "Position at Company" / "Position @ Company" / "Position в компанії X"
+// into [title, company]. Conservative: only well-known company separators.
+function splitTitleCompany(title) {
+  const m = title.match(/^(.*?)(?:\s+(?:at|@|в компанії|у компанії)\s+)(.+)$/i);
+  if (m && m[1].trim() && m[2].trim()) return [m[1].trim(), m[2].trim()];
+  return [title, ""];
+}
+
 export function normalizeJob(raw) {
-  const title = (raw.title || "").trim();
+  let title = (raw.title || "").trim();
   const url = (raw.url || "").trim();
   let company = (raw.company || "").trim();
+
+  // If the company arrived glued into the title, pull it out so the title
+  // header shows only the role and the company renders in its own element.
+  if (!company) {
+    const [t, c] = splitTitleCompany(title);
+    title = t;
+    company = c;
+  }
 
   // Salary sometimes ends up glued into the company field (esp. work.ua/robota.ua).
   // Prefer an explicit salary, otherwise sniff it out of title/company and strip it.
@@ -68,9 +84,17 @@ export function dedupe(jobs) {
   return out;
 }
 
+// Generic words that should not, on their own, qualify a match. Without this,
+// "senior motion designer" matches "Senior Product Owner" just on "senior".
+const GENERIC_TERMS = new Set([
+  "senior", "middle", "junior", "lead", "principal", "trainee", "intern",
+  "remote", "office", "relocate", "relocation", "fulltime", "parttime",
+  "сеньйор", "мідл", "джуніор", "лід",
+]);
+
 // Apply user filters server-side.
-// filters: { query, remote ("remote"|"office"|"any"), location }
-export function applyFilters(jobs, { query, remote, location } = {}) {
+// filters: { query, remote, location, tools }
+export function applyFilters(jobs, { query, remote, location, tools } = {}) {
   let out = jobs;
 
   if (remote === "remote") out = out.filter((j) => j.remote === true);
@@ -81,14 +105,35 @@ export function applyFilters(jobs, { query, remote, location } = {}) {
     out = out.filter((j) => j.location.toLowerCase().includes(loc));
   }
 
-  // Keyword pre-filter is loose here; precise ranking happens in rank.js.
+  // Query filter: require ALL *significant* terms (AND), not any (OR). Generic
+  // seniority/format words are ignored for matching so they don't pull in
+  // unrelated roles. Precise ordering still happens in rank.js.
   if (query) {
-    const terms = tokenize(query);
+    const all = tokenize(query);
+    let significant = all.filter((t) => !GENERIC_TERMS.has(t));
+    if (significant.length === 0) significant = all;
     out = out.filter((j) => {
       const hay = `${j.title} ${j.company} ${j.tags.join(" ")} ${j.description}`.toLowerCase();
-      return terms.some((t) => hay.includes(t));
+      return significant.every((t) => hay.includes(t));
     });
   }
+
+  // Tools filter: each comma/newline-separated phrase must appear (substring)
+  // in the title/tags/description — searches the vacancy text for e.g.
+  // "after effects" or "tableau".
+  if (tools) {
+    const phrases = tools
+      .split(/[,\n;]+/)
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean);
+    if (phrases.length) {
+      out = out.filter((j) => {
+        const hay = `${j.title} ${j.tags.join(" ")} ${j.description}`.toLowerCase();
+        return phrases.every((p) => hay.includes(p));
+      });
+    }
+  }
+
   return out;
 }
 

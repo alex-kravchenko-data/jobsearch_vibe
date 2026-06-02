@@ -15,7 +15,13 @@ export async function fetchDjinni({ query = "", remote = "any" } = {}) {
   if (remote === "remote") params.set("employment", "remote");
   const url = `https://djinni.co/jobs/?${params.toString()}`;
 
-  const html = await fetchText(url, { timeout: 12000 });
+  // Djinni sits behind Cloudflare and frequently returns 403 to datacenter
+  // IPs (e.g. Vercel). A browser-like Referer helps marginally but is not a
+  // guarantee — treat results as best-effort.
+  const html = await fetchText(url, {
+    timeout: 12000,
+    headers: { Referer: "https://djinni.co/jobs/" },
+  });
   const $ = cheerio.load(html);
   const jobs = [];
 
