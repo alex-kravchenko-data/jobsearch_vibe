@@ -29,10 +29,17 @@ GitHub Pages  ──(fetch)──►  Vercel Serverless API  ──►  DOU RSS 
 
 | Джерело   | Метод                          | Надійність | Примітка |
 |-----------|--------------------------------|------------|----------|
-| DOU       | Офіційні RSS-стрічки           | ✅ висока   | Найкраще джерело, легально |
-| work.ua   | Парсинг HTML                   | 🟡 середня | Селектори можуть змінюватись |
+| DOU       | Офіційні RSS-стрічки           | ✅ висока   | Найкраще IT-джерело, легально |
+| work.ua   | Парсинг HTML                   | 🟡 середня | #1 загальний борд (~106K) |
+| robota.ua | Публічний JSON API (api.robota.ua) | 🟡 середня | #2 загальний борд (~110K) |
+| Jooble    | Офіційний API (потрібен ключ)  | ✅ висока   | Мета-агрегатор сотень джерел |
 | Djinni    | Парсинг HTML (best-effort)     | 🟠 низька   | Анти-бот, може віддавати порожньо |
+| OLX       | Публічний JSON API (best-effort) | 🟠 низька  | Величезне охоплення, регіони |
 | LinkedIn  | Неофіційний guest-endpoint     | 🔴 ризик    | **Вимкнено за замовч.**, проти ToS |
+
+> **Jooble** вмикається, коли заданий `JOOBLE_API_KEY` (безкоштовний ключ на
+> [jooble.org/api/about](https://jooble.org/api/about)). Без ключа джерело
+> просто пропускається.
 
 > ⚠️ LinkedIn-скрапінг порушує умови використання LinkedIn і легко блокується.
 > Вмикається лише через `ENABLE_LINKEDIN=true`. Використовуйте на власний ризик.
@@ -79,7 +86,7 @@ npm run serve:frontend
 | `remote`   | `remote` \| `office` \| `any`                   |
 | `location` | місто (фільтр за підрядком)                      |
 | `category` | категорія DOU (`Design`, `3D/Animation`, …)     |
-| `sources`  | список через кому: `dou,work.ua,djinni,linkedin`|
+| `sources`  | через кому: `dou,work.ua,robota.ua,djinni,olx,jooble,linkedin` |
 | `smart`    | `1` — увімкнути розумне ранжування              |
 | `limit`    | макс. результатів (за замовч. 100)              |
 
@@ -99,7 +106,7 @@ public/            статичний фронтенд (GitHub Pages)
 api/               serverless-функції (Vercel)
   search.js        головний ендпоінт
   _lib/            cors, нормалізація, ранжування, fetch
-  _sources/        dou, workua, djinni, linkedin
+  _sources/        dou, workua, robotaua, jooble, djinni, olx, linkedin
 .github/workflows/deploy-pages.yml
 vercel.json
 ```
