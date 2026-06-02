@@ -1,0 +1,141 @@
+:root {
+  --bg: #0f1116;
+  --panel: #181b23;
+  --panel-2: #20242f;
+  --border: #2a2f3a;
+  --text: #e7e9ee;
+  --muted: #9aa3b2;
+  --primary: #6c8cff;
+  --smart: #b06cff;
+  --accent: #36d39a;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.brand { font-weight: 700; font-size: 18px; }
+.brand span { color: var(--primary); }
+
+.auth { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.auth-status { color: var(--muted); }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+.search-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+}
+.search-input:focus { outline: 2px solid var(--primary); }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 16px 0;
+  align-items: end;
+}
+.filters label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.filters input[type="text"], .filters select {
+  padding: 9px 10px;
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+}
+.sources { border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; }
+.sources legend { color: var(--muted); font-size: 13px; padding: 0 6px; }
+.sources label { flex-direction: row; align-items: center; gap: 6px; color: var(--text); }
+
+.actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.spacer { flex: 1; }
+
+.btn {
+  padding: 10px 16px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform .05s ease, opacity .15s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #0b1020; font-weight: 600; }
+.btn-smart { background: var(--smart); border-color: var(--smart); color: #160b20; font-weight: 600; }
+.btn-ghost { background: transparent; }
+
+.status-bar { margin: 18px 2px; color: var(--muted); font-size: 14px; min-height: 20px; }
+.status-bar .err { color: #ff8b8b; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.card h3 { margin: 0; font-size: 16px; }
+.card h3 a { color: var(--text); text-decoration: none; }
+.card h3 a:hover { color: var(--primary); }
+.card .company { color: var(--accent); font-size: 14px; }
+.card .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.tag.src { color: var(--primary); }
+.tag.remote { color: var(--accent); }
+.tag.score { color: var(--smart); }
+.card p { color: var(--muted); font-size: 13px; margin: 0; max-height: 4.4em; overflow: hidden; }
+
+.empty { color: var(--muted); text-align: center; padding: 40px; }
+
+.footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px; border-top: 1px solid var(--border); margin-top: 40px; }
+
+.loader { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--muted); border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
+@keyframes spin { to { transform: rotate(360deg); } }

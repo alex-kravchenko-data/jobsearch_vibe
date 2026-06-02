@@ -1,0 +1,86 @@
+// Common job schema + helpers shared across all sources.
+//
+// Normalized job shape:
+// {
+//   id, source, title, company, location, remote (bool|null),
+//   url, description, postedAt (ISO string|null), tags: string[]
+// }
+
+const REMOTE_HINTS = [
+  "remote", "віддалено", "удаленно", "дистанційно", "anywhere", "worldwide",
+];
+
+export function detectRemote(text = "") {
+  const t = text.toLowerCase();
+  if (REMOTE_HINTS.some((h) => t.includes(h))) return true;
+  return null; // unknown
+}
+
+export function normalizeJob(raw) {
+  const title = (raw.title || "").trim();
+  const url = (raw.url || "").trim();
+  return {
+    id: raw.id || hashId(`${raw.source}:${url || title}`),
+    source: raw.source || "unknown",
+    title,
+    company: (raw.company || "").trim(),
+    location: (raw.location || "").trim(),
+    remote: raw.remote ?? detectRemote(`${title} ${raw.location || ""} ${raw.description || ""}`),
+    url,
+    description: (raw.description || "").trim(),
+    postedAt: raw.postedAt || null,
+    tags: Array.isArray(raw.tags) ? raw.tags.filter(Boolean) : [],
+  };
+}
+
+export function dedupe(jobs) {
+  const seen = new Set();
+  const out = [];
+  for (const job of jobs) {
+    const key = (job.url || `${job.title}|${job.company}`).toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(job);
+  }
+  return out;
+}
+
+// Apply user filters server-side.
+// filters: { query, remote ("remote"|"office"|"any"), location }
+export function applyFilters(jobs, { query, remote, location } = {}) {
+  let out = jobs;
+
+  if (remote === "remote") out = out.filter((j) => j.remote === true);
+  else if (remote === "office") out = out.filter((j) => j.remote !== true);
+
+  if (location) {
+    const loc = location.toLowerCase();
+    out = out.filter((j) => j.location.toLowerCase().includes(loc));
+  }
+
+  // Keyword pre-filter is loose here; precise ranking happens in rank.js.
+  if (query) {
+    const terms = tokenize(query);
+    out = out.filter((j) => {
+      const hay = `${j.title} ${j.company} ${j.tags.join(" ")} ${j.description}`.toLowerCase();
+      return terms.some((t) => hay.includes(t));
+    });
+  }
+  return out;
+}
+
+export function tokenize(str = "") {
+  return str
+    .toLowerCase()
+    .split(/[^a-zа-яіїєґ0-9+#]+/i)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 1);
+}
+
+function hashId(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (Math.imul(31, h) + str.charCodeAt(i)) | 0;
+  }
+  return "j" + (h >>> 0).toString(36);
+}

@@ -1,0 +1,15 @@
+{
+  "name": "jobsearch-vibe",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Job search aggregator: scrapes UA job boards (DOU, work.ua, Djinni) and ranks results. Static frontend on GitHub Pages + serverless API on Vercel.",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "serve:frontend": "npx --yes serve public"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "fast-xml-parser": "^4.5.0"
+  }
+}
