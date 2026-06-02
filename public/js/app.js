@@ -52,8 +52,9 @@ async function runSearch(smart) {
     lastResults = data.jobs || [];
     renderResults(lastResults);
 
-    const errNote = Object.keys(data.errors || {}).length
-      ? ` · <span class="err">помилки джерел: ${Object.keys(data.errors).join(", ")}</span>`
+    const errEntries = Object.entries(data.errors || {});
+    const errNote = errEntries.length
+      ? ` · <span class="err" title="${esc(errEntries.map(([k, v]) => `${k}: ${v}`).join(" | "))}">помилки джерел: ${errEntries.map(([k, v]) => `${esc(k)} (${esc(String(v))})`).join(", ")}</span>`
       : "";
     const smartNote = smart ? " (відсортовано за релевантністю)" : "";
     setStatus(

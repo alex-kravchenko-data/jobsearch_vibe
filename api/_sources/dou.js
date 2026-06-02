@@ -12,12 +12,17 @@ import { normalizeJob } from "../_lib/jobs.js";
 const parser = new XMLParser({ ignoreAttributes: false });
 
 export async function fetchDou({ query = "", category = "" } = {}) {
+  // The DOU RSS feed endpoint supports `category`/`city` only — not free-text
+  // search. The query is applied later in applyFilters(), so we just fetch the
+  // relevant category feed (or the latest-vacancies feed when no category).
   const params = new URLSearchParams();
   if (category) params.set("category", category);
-  if (query) params.set("search", query);
-  const url = `https://jobs.dou.ua/vacancies/feeds/?${params.toString()}`;
+  const qs = params.toString();
+  const url = `https://jobs.dou.ua/vacancies/feeds/${qs ? `?${qs}` : ""}`;
 
-  const xml = await fetchText(url);
+  const xml = await fetchText(url, {
+    headers: { Accept: "application/rss+xml, application/xml, text/xml, */*" },
+  });
   const data = parser.parse(xml);
   const items = toArray(data?.rss?.channel?.item);
 
