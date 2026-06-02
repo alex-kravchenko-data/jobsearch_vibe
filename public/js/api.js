@@ -46,6 +46,6 @@ async function postJson(path, body) {
   return data;
 }
 
-export function analyzeResume({ filename, mimeType, dataBase64 }) {
-  return postJson("/api/resume", { filename, mimeType, dataBase64 });
+export function analyzeResume({ filename, mimeType, dataBase64, jobDescription }) {
+  return postJson("/api/resume", { filename, mimeType, dataBase64, jobDescription });
 }

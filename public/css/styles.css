@@ -250,6 +250,14 @@ body {
 .tool-panel h2 { margin: 0 0 6px; }
 .upload-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 16px 0; }
 .upload-row input[type="file"] { color: var(--text); }
+.jd-field { margin: 4px 0 12px; }
+.jd-field summary { cursor: pointer; color: var(--primary); font-size: 14px; }
+.jd-input {
+  width: 100%; margin-top: 10px; padding: 12px; border-radius: 10px;
+  background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+  font-family: inherit; font-size: 14px; resize: vertical;
+}
+.jd-input:focus { outline: 2px solid var(--primary); }
 /* ── Analysis results ── */
 .analysis { margin-top: 18px; display: flex; flex-direction: column; gap: 16px; }
 .analysis .block { background: var(--panel-2); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }

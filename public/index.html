@@ -118,11 +118,15 @@
       <section class="panel-view" id="view-resume">
         <div class="tool-panel">
           <h2>📄 Аналіз резюме</h2>
-          <p class="muted">Завантажте резюме (PDF, DOCX, TXT, MD або зображення) — Claude дасть оцінку, конкретні поради та запропонує покращену версію. Макс. ~4 МБ.</p>
+          <p class="muted">Завантажте резюме (PDF, DOCX, TXT, MD або зображення) — Claude дасть оцінку, поради, покращену версію та згенерує PDF (до 2 сторінок). Макс. ~4 МБ.</p>
           <div class="upload-row">
             <input type="file" id="resume-file" accept=".pdf,.doc,.docx,.txt,.md,.rtf,image/*" />
             <button type="button" id="resume-analyze" class="btn btn-smart" disabled>✨ Аналізувати</button>
           </div>
+          <details class="jd-field">
+            <summary>🎯 Підлаштувати під конкретну вакансію (опційно)</summary>
+            <textarea id="resume-jd" class="jd-input" rows="6" placeholder="Вставте опис цільової вакансії — Claude заточить резюме під неї та покаже, чого бракує."></textarea>
+          </details>
           <div class="status-bar" id="resume-status"></div>
           <div id="resume-result" class="analysis"></div>
         </div>
